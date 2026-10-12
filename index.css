@@ -1,0 +1,49 @@
+/*
+  This file is part of FLOOD-STAT.
+
+  FLOOD-STAT is free software: you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free Software
+  Foundation, either version 3 of the License, or (at your option) any later
+  version.
+
+  FLOOD-STAT is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along with
+  FLOOD-STAT (file LICENSE in the main directory). If not, see
+  <http://www.gnu.org/licenses/>.
+*/
+
+html, body {
+  user-select: none;
+}
+
+table#field , table#field td, table#field tr {
+  border: 1px none;
+  border-collapse: collapse
+}
+
+table#field td {
+  width: 0.6em;
+  height: 0.6em;
+}
+
+table#field td.l { background-color: #9141ac }
+table#field td.g { background-color: #33d17a }
+table#field td.b { background-color: #3584e4 }
+table#field td.o { background-color: #ff7800 }
+table#field td.r { background-color: #eb333b }
+table#field td.y { background-color: #f6d32d }
+
+div#ui {
+  display: flex;
+}
+
+div.stats {
+  margin-left: 1em;
+}
+
+button#new, button#restart {
+  margin-top: 1em;
+}

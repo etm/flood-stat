@@ -1,0 +1,54 @@
+<!--
+  This file is part of FLOOD-STAT.
+
+  FLOOD-STAT is free software: you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free Software
+  Foundation, either version 3 of the License, or (at your option) any later
+  version.
+
+  FLOOD-STAT is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along with
+  FLOOD-STAT (file LICENSE in the main directory).  If not, see
+  <http://www.gnu.org/licenses/>.
+-->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <title>Flood</title>
+
+    <!-- libs, do not modify. When local than load local libs. -->
+    <script type="text/javascript" src="/js_libs/jquery.min.js"></script>
+    <script type="text/javascript" src="/js_libs/jquery.browser.js"></script>
+    <script type="text/javascript" src="/js_libs/jquery.svg.min.js"></script>
+    <script type="text/javascript" src="/js_libs/jquery.svgdom.min.js"></script>
+    <script type="text/javascript" src="/js_libs/vkbeautify.js"></script>
+    <script type="text/javascript" src="/js_libs/util.js"></script>
+    <script type="text/javascript" src="/js_libs/printf.js"></script>
+    <script type="text/javascript" src="/js_libs/strftime.min.js"></script>
+    <script type="text/javascript" src="/js_libs/parsequery.js"></script>
+    <script type="text/javascript" src="/js_libs/underscore.min.js"></script>
+    <script type="text/javascript" src="/js_libs/jquery.caret.min.js"></script>
+    <script type="text/javascript" src="/js_libs/jquery.cookie.js"></script>
+
+    <link rel="stylesheet" href="index.css" type="text/css"/`>
+    <script type="text/javascript" src="index.js"></script>
+    <style></style>
+  </head>
+  <body data-base-port="9298" data-base-engine="engine/" data-base-themes="themes/" is="x-ui-">
+    <div id='ui'>
+      <table id="field"></table>
+      <div class="stats" id='neighbors'></div>
+      <div class="stats" id='neighbor_fields'></div>
+    </div>
+    <button id='new'>New</button>
+    <button id='restart'>Restart</button>
+    <span id="stats"></span>
+  </body>
+</html>
