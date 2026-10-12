@@ -48,7 +48,7 @@ function init(size,seed) {
   return field;
 }
 
-function draw(field,clicks) {
+function draw(field,steps,ends) {
   let tab = document.querySelector('table#field');
   tab.replaceChildren();
   for (let i=0; i<field.length; i++) {
@@ -60,13 +60,31 @@ function draw(field,clicks) {
     }
     tab.append(tr);
   }
-  document.querySelector('span#stats').textContent = 'Clicks: ' + clicks;
+  document.querySelector('span#stats').textContent = 'Steps: ' + steps;
 
-  draw_stats(document.querySelector('div#neighbors'), neighbors(field));
-  draw_stats(document.querySelector('div#neighbor_fields'), neighbor_fields(field));
+  draw_stats(document.querySelector('div#neighbors'), neighbors(field), 'N: ' + ends.n);
+  draw_stats(document.querySelector('div#neighbor_fields'), neighbor_fields(field), 'NF: ' + ends.nf);
 }
-function draw_stats(div,stats) {
+function calc_ends(field) {
+  return { n: steps_to_end(field,neighbors), nf: steps_to_end(field,neighbor_fields) };
+}
+function steps_to_end(field,stat) {
+  // greedy: always color with biggest number
+  let copy = structuredClone(field);
+  let steps = 0;
+  let s = Object.keys(stat(copy));
+  while (s.length > 0) {
+    color(s[0],copy);
+    steps += 1;
+    s = Object.keys(stat(copy));
+  }
+  return steps;
+}
+function draw_stats(div,stats,name) {
   div.replaceChildren();
+  let title = document.createElement('div');
+  title.textContent = name;
+  div.append(title);
   for (const [key, value] of Object.entries(stats)) {
     let d = document.createElement('div');
     d.className = key;
@@ -167,32 +185,34 @@ document.addEventListener('DOMContentLoaded', function(){
   let param = new URL(window.location).searchParams.get('field');
   let field = init(32,param === null || isNaN(parseInt(param)) ? seed() : parseInt(param));
   let field_save = structuredClone(field);
-  let clicks = 0;
-  draw(field, clicks);
+  let ends = calc_ends(field);
+  let steps = 0;
+  draw(field, steps, ends);
   document.addEventListener('keydown', function(event) {
     const key = event.key;
     if (chars.includes(key)) {
-      clicks += 1;
+      steps += 1;
       color(key,field);
-      draw(field,clicks);
+      draw(field,steps,ends);
       event.preventDefault();
     }
   });
   document.addEventListener('click', function(event) {
     const target = event.target;
-    if (target.matches('table#field td, div.stats div')) {
-      clicks += 1;
+    if (target.matches('table#field td, div.stats div') && chars.includes(target.className)) {
+      steps += 1;
       color(target.className,field);
-      draw(field,clicks);
+      draw(field,steps,ends);
     } else if (target.matches('button#restart')) {
       field = structuredClone(field_save);
-      clicks = 0;
-      draw(field,clicks);
+      steps = 0;
+      draw(field,steps,ends);
     } else if (target.matches('button#new')) {
       field = init(32,seed());
       field_save = structuredClone(field);
-      clicks = 0;
-      draw(field, clicks);
+      ends = calc_ends(field);
+      steps = 0;
+      draw(field, steps, ends);
     }
   });
 });
