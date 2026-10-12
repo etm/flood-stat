@@ -15,42 +15,63 @@
   <http://www.gnu.org/licenses/>.
 */
 
-const chars = ['l', 'g', 'b', 'o', 'r', 'y'];
+const chars = ['p', 'g', 'b', 'o', 'r', 'y'];
 
-function init(size) {
+function seed() {
+  let url = new URL(window.location);
+  let seed = Math.floor(Math.random() * 4294967296);
+  url.searchParams.set('field', seed);
+  history.pushState(null, '', url);
+  return seed;
+}
+
+function rng(seed) {
+  // mulberry32i deterministic floats in [0,1) for a 32bit seed
+  return function() {
+    seed = (seed + 0x6D2B79F5) | 0;
+    let t = seed;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function init(size,seed) {
+  let random = rng(seed);
   let field = [];
   for (let i=0; i<size; i++) {
     field[i] = [];
     for (let j=0; j<size; j++) {
-      field[i][j] = chars[Math.floor(Math.random() * chars.length)];
+      field[i][j] = chars[Math.floor(random() * chars.length)];
     }
   }
   return field;
 }
 
 function draw(field,clicks) {
-  let tab = $('table#field');
-  tab.empty();
+  let tab = document.querySelector('table#field');
+  tab.replaceChildren();
   for (let i=0; i<field.length; i++) {
-    let tr = $('<tr></tr>');
+    let tr = document.createElement('tr');
     for (let j=0; j<field.length; j++) {
-      tr.append($('<td class="' + field[i][j] + '"></td>'));
+      let td = document.createElement('td');
+      td.className = field[i][j];
+      tr.append(td);
     }
     tab.append(tr);
   }
-  $('span#stats').empty();
-  $('span#stats').append('Clicks: ' + clicks);
+  document.querySelector('span#stats').textContent = 'Clicks: ' + clicks;
 
-  $('div.stats').empty();
-
-  let n = neighbors(field);
-  for (const [key, value] of Object.entries(n)) {
-    $('div#neighbors').append($('<div class="' + key + '">' + key + ': ' + value + '</div>'));
-  }
-
-  let nf = neighbor_fields(field);
-  for (const [key, value] of Object.entries(nf)) {
-    $('div#neighbor_fields').append($('<div class="' + key + '">' + key + ': ' + value + '</div>'));
+  draw_stats(document.querySelector('div#neighbors'), neighbors(field));
+  draw_stats(document.querySelector('div#neighbor_fields'), neighbor_fields(field));
+}
+function draw_stats(div,stats) {
+  div.replaceChildren();
+  for (const [key, value] of Object.entries(stats)) {
+    let d = document.createElement('div');
+    d.className = key;
+    d.textContent = key + ': ' + value;
+    div.append(d);
   }
 }
 
@@ -142,12 +163,13 @@ function cellcount(what,field,stats,visited,i,j) {
   }
 }
 
-$(document).ready(function(){
-  let field = init(32);
+document.addEventListener('DOMContentLoaded', function(){
+  let param = new URL(window.location).searchParams.get('field');
+  let field = init(32,param === null || isNaN(parseInt(param)) ? seed() : parseInt(param));
   let field_save = structuredClone(field);
   let clicks = 0;
   draw(field, clicks);
-  $(document).on('keydown', function(event) {
+  document.addEventListener('keydown', function(event) {
     const key = event.key;
     if (chars.includes(key)) {
       clicks += 1;
@@ -156,21 +178,21 @@ $(document).ready(function(){
       event.preventDefault();
     }
   });
-  $(document).on('click', 'table#field td', function(event) {
-    clicks += 1;
-    color(event.target.className,field);
-    draw(field,clicks);
-  });
-  $(document).on('click', 'button#restart', function(event) {
-    field = structuredClone(field_save);
-    clicks = 0;
-    draw(field,clicks);
-  });
-  $(document).on('click', 'div.stats div', function(event) {
-    if (event.target.className != '') {
+  document.addEventListener('click', function(event) {
+    const target = event.target;
+    if (target.matches('table#field td, div.stats div')) {
       clicks += 1;
-      color(event.target.className,field);
+      color(target.className,field);
       draw(field,clicks);
+    } else if (target.matches('button#restart')) {
+      field = structuredClone(field_save);
+      clicks = 0;
+      draw(field,clicks);
+    } else if (target.matches('button#new')) {
+      field = init(32,seed());
+      field_save = structuredClone(field);
+      clicks = 0;
+      draw(field, clicks);
     }
   });
 });

@@ -29,7 +29,7 @@ table#field td {
   height: 0.6em;
 }
 
-table#field td.l { background-color: #9141ac }
+table#field td.p { background-color: #9141ac }
 table#field td.g { background-color: #33d17a }
 table#field td.b { background-color: #3584e4 }
 table#field td.o { background-color: #ff7800 }
